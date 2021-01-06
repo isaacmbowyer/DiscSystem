@@ -1,5 +1,6 @@
 package com.company;
 
+// Subclass of the super class
 public class GameDisc extends Disc {
     private String PEGIRating;
     private String platform;

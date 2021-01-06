@@ -1,6 +1,7 @@
 package com.company;
 
 
+// Super abstract class
 public abstract class Disc{
     private String title;
     private String genre;

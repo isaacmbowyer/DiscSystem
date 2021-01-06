@@ -2,7 +2,6 @@ package com.company;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public class ManagementFile {
@@ -63,6 +62,8 @@ public class ManagementFile {
         String line = "";
         try {
             File file = new File(path);
+
+            // If there is no discs stored, then output a message
             if (file.length() == 0) {
                 System.out.println("There is no discs stored");
                 return false;
@@ -76,7 +77,8 @@ public class ManagementFile {
                 records.add(values);
             }
 
-            inReverse(records, 0, records.size() - 1);
+            // Change the order of the list
+            ListInReverse(records, 0, records.size() - 1);
 
             // Display the reversed list
             for (String[] record : records)
@@ -88,7 +90,7 @@ public class ManagementFile {
         return true;
     }
     // Change the order of the list in reverse
-    public static void inReverse(ArrayList<String[]> records, int startIndex, int endIndex){
+    public static void ListInReverse(ArrayList<String[]> records, int startIndex, int endIndex){
         // Base Case
         if (startIndex > endIndex) {
            return;  // no more records to reverse in the list
@@ -107,13 +109,14 @@ public class ManagementFile {
         endIndex -=1;    // Move towards the start of the list by 1
 
         // Call the reverseList again
-        inReverse(records, startIndex, endIndex);
+        ListInReverse(records, startIndex, endIndex);
 
 
     }
     // Show a HashMap of the details of the record depending on the size of the array
     public static void displayRecordInHashMap(String[] currentRecord){
         LinkedHashMap<String, String> detailsOfDisc =new LinkedHashMap<>();
+        // Get all the attributes for that record
         if (currentRecord.length == 6){
             detailsOfDisc.put("Title", currentRecord[0]);
             detailsOfDisc.put("Genre", currentRecord[1]);
@@ -200,6 +203,7 @@ public class ManagementFile {
 
     // Delete the disc from the file
     public static void deleteRecordFromFile(Disc disc){
+        // Get the title from the deleted disc
         String removeRecord = disc.getTitle();
         String line = "";
         try {
@@ -213,9 +217,8 @@ public class ManagementFile {
                 String[] recordValues = line.split(",");
 
                 // Check what row number the record is at so we can delete it
-                if (!(recordValues[0].equals(removeRecord))) {
+                if (!(recordValues[0].equals(removeRecord)))
                     records.add(recordValues);
-                }
 
             }
             // Wipe out everything

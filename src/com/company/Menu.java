@@ -1,14 +1,13 @@
 package com.company;
 
-import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Menu {
     public static Scanner keyboard = new Scanner(System.in);
 
-    // Main method for Menu System
-    public static void main() {
+    // Menu system
+    public static void main(){
         // Run the application until the user wishes to stop
         boolean quit = false; // Checks if user decides to quit or not
         do {
@@ -48,12 +47,8 @@ public class Menu {
                 // Search for a disc and display its details
                 case 4 -> ManagementDisc.searchForDisc();
 
-                // Reverse the discs list - I have done it in the ManagementDisc and ManagementFile
-                case 5 -> {
-                    ManagementFile.readAllRecords();
-//                  ManagementDisc.reverseList(0, ManagementDisc.getLastIndexOfDiscs());
-//                  ManagementDisc.displayAllDiscs();
-                }
+                // Reverse the records
+                case 5 -> ManagementFile.readAllRecords();
 
                 // Edit the details of a disc
                 case 6 -> {

@@ -1,6 +1,6 @@
 package com.company;
 
-
+// Subclass of the super class
 public class MusicDisc extends Disc{
     private String artist;
     private int numOfSongs;

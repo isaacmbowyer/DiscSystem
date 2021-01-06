@@ -1,11 +1,8 @@
 package com.company;
 
-import java.io.IOException;
-
 public class Main {
-    public static void main(String[] args)  {
-         Menu.main();
-
+    public static void main(String[] args) {
+        // Entry point to application
+        Menu.main();
     }
-
 }

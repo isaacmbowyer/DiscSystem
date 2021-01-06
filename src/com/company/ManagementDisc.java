@@ -5,14 +5,14 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 public class ManagementDisc {
-    private static final Vector<Disc> discs =new Vector<>();     // Holds discs of MusicDiscs and GameDiscs
+    private static final Vector<Disc> discs = new Vector<>();     // Holds discs of MusicDiscs and GameDiscs
     private static final String[] PEGIRatings = {"3", "7", "12", "16", "18"};
     private static final String[] musicGenres = {"Pop", "Jazz", "Rock", "Hip hop", "Heavy Metal"};
 
     // Gets user to input details about their Music Disc they wish to create
-    public static MusicDisc createAMusicDisc(){
+    public static MusicDisc createAMusicDisc() {
         System.out.println("Title of Song:");
-        String titleOfSong = inputTitle();
+        String titleOfSong = Menu.keyboard.nextLine();
 
         // Get the Genre:
         String musicGenre = setOption(musicGenres, "Genres");
@@ -30,7 +30,7 @@ public class ManagementDisc {
         int durationOfSongs = Menu.getIntValidInput();
 
         // Create a Music Disc Object
-        MusicDisc musicDisc =new MusicDisc(titleOfSong, musicGenre, date, artistName, numOfSongs, durationOfSongs);
+        MusicDisc musicDisc = new MusicDisc(titleOfSong, musicGenre, date, artistName, numOfSongs, durationOfSongs);
 
         // Add the new created disc to the list
         discs.add(musicDisc);
@@ -40,9 +40,9 @@ public class ManagementDisc {
     }
 
     // Gets user to input details about their Game  Disc they wish to create
-    public static GameDisc createAGameDisc(){
+    public static GameDisc createAGameDisc() {
         System.out.println("Title of Game:");
-        String titleOfGame = inputTitle();
+        String titleOfGame = Menu.keyboard.nextLine();
 
         System.out.println("Genre:");
         String genre = Menu.keyboard.nextLine();
@@ -56,7 +56,7 @@ public class ManagementDisc {
         System.out.println("Platform:");
         String platform = Menu.keyboard.nextLine();
 
-        GameDisc gameDisc =new GameDisc(titleOfGame, genre, releaseDate, chosenPEGIRating, platform);
+        GameDisc gameDisc = new GameDisc(titleOfGame, genre, releaseDate, chosenPEGIRating, platform);
 
         // Add the new created disc to the list
         discs.add(gameDisc);
@@ -66,26 +66,26 @@ public class ManagementDisc {
 
     }
 
-
     // Remove a disc from the discs list
-    public static Disc removeDisc(){
+    public static Disc removeDisc() {
         // Check if the list is empty:
-        if (discs.isEmpty()){
+        if (discs.isEmpty()) {
             System.out.println("You have not made any discs");
             return null;
         }
-        // Get user to type what Title of Disc they want
-        System.out.println("Enter the Title of Disc you wish to remove:");
+        // Get user to type what Title of Disc
+        System.out.println("Enter the Title of Disc you wish to remove");
         String choice = Menu.keyboard.nextLine();
 
-        int index = findDisc(choice); // Make sure the disc can be found
+        // Find disc
+        int index = findDisc(choice);
 
-        // The disc could not be found so exit
+        // If the disc does not exist - exit
         if (index == -1)
             return null;
 
         // Capture the disc so we can delete it in the file
-        Disc oldDisc =discs.get(index);
+        Disc oldDisc = discs.get(index);
 
         // Using index remove the disc from the list
         discs.remove(index);
@@ -99,29 +99,28 @@ public class ManagementDisc {
     // Edit a Disc
     public static RecordValues<String, String, Disc> editDisc() {
         // Check if the list is empty:
-        if (discs.isEmpty()){
+        if (discs.isEmpty()) {
             System.out.println("You have not made any discs");
             return null;
         }
-        // Get user to type what Title of Disc they want
-        System.out.println("Enter the Title of Disc you wish to edit:");
+        // Get user to type what Title of Disc
+        System.out.println("Enter the Title of Disc you wish to edit");
         String choice = Menu.keyboard.nextLine();
 
-        int index = findDisc(choice);  // Make sure the disc can be found
+        // Find disc
+        int index = findDisc(choice);
 
         // If the disc does not exist - exit
         if (index == -1)
             return null;
 
-
         // Retrieve the disc from the index
         Disc disc = discs.get(index);
-
 
         // The user will be prevented with different fields to change based on what disc they made
         String[] options;
         if (disc instanceof MusicDisc)
-             options = new String[]{"Title", "Genre", "Release Date", "Artist", "Number of Songs", "Duration of Songs"};
+            options = new String[]{"Title", "Genre", "Release Date", "Artist", "Number of Songs", "Duration of Songs"};
 
         else
             options = new String[]{"Title", "Genre", "Release Date", "PEGIRating", "Platform"};
@@ -136,14 +135,14 @@ public class ManagementDisc {
         String oldTitle = disc.getTitle();
 
         // Check if the disc is an instance of the MusicDisc
-        if (disc instanceof MusicDisc){
+        if (disc instanceof MusicDisc) {
             MusicDisc musicDisc = (MusicDisc) disc;
 
 
             // Check which option the user put and get a new value for it
-            switch(editOption) {
+            switch (editOption) {
                 case "Title" -> {
-                    String newValue = inputTitle();
+                    String newValue = Menu.keyboard.nextLine();
                     musicDisc.setTitle(newValue);
                 }
                 case "Genre" -> {
@@ -173,9 +172,9 @@ public class ManagementDisc {
             GameDisc gameDisc = (GameDisc) disc;
 
             // Check which option the user put and get a new value for it
-            switch(editOption) {
+            switch (editOption) {
                 case "Title" -> {
-                    String newValue = inputTitle();
+                    String newValue = Menu.keyboard.nextLine();
                     gameDisc.setTitle(newValue);
                 }
                 case "Genre" -> {
@@ -199,7 +198,7 @@ public class ManagementDisc {
 
         System.out.println("Your " + disc.getTitle() + " disc has now been changed");
 
-        /* We now need to update our file, so we can send in a Record which contains the edit option the user
+        /* We now need to update our file, so we can send in a Record which contains the  oldTitle, edit option the user
             chose and the cd so we can update it
         */
         return new RecordValues<>(oldTitle, editOption, disc);
@@ -208,65 +207,26 @@ public class ManagementDisc {
     /* Searches for a specific disc byt Title from discs list and displays its details in a LinkedHashMap so its
     easier for the user to read
     */
-    public static void searchForDisc(){
+    public static void searchForDisc() {
         // Check if the list is empty:
-        if (discs.isEmpty()){
+        if (discs.isEmpty()) {
             System.out.println("You have not made any discs");
             return;
         }
-        // Get user to type what Title of Disc they want
-        System.out.println("Enter the Title of Disc you wish to search:");
+
+        // Get user to type what Title of Disc
+        System.out.println("Enter the Title of Disc you wish to search");
         String choice = Menu.keyboard.nextLine();
 
-        int index = findDisc(choice); // Make sure the disc can be found
+        // Find disc
+        int index = findDisc(choice);
 
-        // If the disc does not exist - exit
+        // If the disc does not exist return -1
         if (index == -1)
             return;
 
-        displayDisc(index);
-
-    }
-
-    // Reverse the order of discs in discs list using recursion
-    public static void reverseList(int startIndex, int endIndex) {
-        // Base Case
-        if (startIndex >= endIndex) {
-            return; // no more discs to reverse in the list
-        }
-
-        // Using the start Index of the disc store it in tempDisc
-        Disc tempDisc = discs.get(startIndex);
-
-        // Get the last disc and replace it with the disc at the start
-        discs.set(startIndex, discs.get(endIndex));
-
-        // Using the tempDisc, replace the end disc with the disc we just replaced
-        discs.set(endIndex, tempDisc);
-
-        startIndex +=1;  // Move towards the end of list by 1
-        endIndex -=1;    // Move towards the start of the list by 1
-
-        // Call the reverseList again
-        reverseList(startIndex, endIndex);
-
-    }
-
-    // Display all the reversed discs to the User
-    public static void displayAllDiscs(){
-        System.out.println("Your discs:");
-        for(int i = 0; i < discs.size(); i++)
-            displayDisc(i);
-    }
-
-    // Get the last index of the discs list in order to reverse the list
-    public static int getLastIndexOfDiscs(){
-        return discs.size() - 1;
-    }
-
-    // Display the details of the disc in a Hash Map so the user can see the variables and values easily
-    private static void displayDisc(int index){
-        LinkedHashMap<String, String> detailsOfDisc =new LinkedHashMap<>();
+        // Display the details of the disc in a Hash Map so the user can see the variables and values easily
+        LinkedHashMap<String, String> detailsOfDisc = new LinkedHashMap<>();
         Disc disc = discs.get(index);
 
         // Get the inherited details first
@@ -275,13 +235,12 @@ public class ManagementDisc {
         detailsOfDisc.put("Release Date", disc.getReleaseDate());
 
         // Check if disc is an instance of MusicDisc and add the details for that class
-        if(disc instanceof MusicDisc){
+        if (disc instanceof MusicDisc) {
             MusicDisc musicDisc = (MusicDisc) disc;
             detailsOfDisc.put("Artist", musicDisc.getArtist());
             detailsOfDisc.put("Number of Songs", String.valueOf(musicDisc.getNumOfSongs()));
             detailsOfDisc.put("Duration of Songs", String.valueOf(musicDisc.getDurationOfSongs()));
-        }
-        else { // disc would be an instance of GameDisc so add all the details for that class
+        } else { // disc would be an instance of GameDisc so add all the details for that class
             GameDisc gameDisc = (GameDisc) disc;
             detailsOfDisc.put("PEGIRating", gameDisc.getPEGIRating());
             detailsOfDisc.put("Platform", gameDisc.getPlatform());
@@ -289,27 +248,43 @@ public class ManagementDisc {
 
         // Display the details of the disc as a String
         System.out.println(detailsOfDisc);
+
+    }
+
+    // Make sure that Title of the Disc does exist
+    private static int findDisc(String choice) {
+        for (int i = 0; i < discs.size(); i++) {
+            // Retrieve the first disc in the list at its index position
+            Disc currentDisc = discs.get(i);
+            // Check if the list exists based on the Title
+            if (currentDisc.getTitle().equals(choice)) {
+                return i; // return the index position of that element
+            }
+        }
+        // If the disc could not be found in the list - show message
+        System.out.println(choice + " disc does not exist");
+        return -1;
     }
 
     // Using a given list, display the list and allow the user to pick an option.
-    private static String setOption(String[] list, String message){
+    private static String setOption(String[] list, String message) {
         boolean validOption;
         String choice;
-        do{
+        do {
             System.out.println(message); // Display what we are doing
             displayList(list);  // Display the Options to the user
             System.out.println("Please enter your choice:");
             int option = Menu.getIntValidInput(); // Get the position of the option in the list
             choice = getChosenOption(option, list); // Get the actual option the user chose
             validOption = !choice.equals(""); // If the user entered an invalid option, set to false and loop again
-        } while(!validOption);
+        } while (!validOption);
 
         return choice;
     }
 
-    // Display the options available to the user to the user
+    // Display the options available to the user
     private static void displayList(String[] list) {
-        for(int i = 0; i < list.length; i++){
+        for (int i = 0; i < list.length; i++) {
             System.out.println("\t" + (i + 1) + ": " + list[i]);  // i + 1 to get the position
         }
     }
@@ -318,50 +293,9 @@ public class ManagementDisc {
     private static String getChosenOption(int chosen, String[] list) {
         try {
             return (list[chosen - 1]);
-        } catch(ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("This is not a valid option. Please try again");
             return ""; // Return an empty string if the user has entered an invalid option
         }
-    }
-
-    // Make sure that Title of the Disc does exist
-    private static int findDisc(String choice){
-       for (int i = 0; i < discs.size(); i++){
-            // Retrieve the first disc in the list at its index position
-            Disc currentDisc = discs.get(i);
-            // Check if the list exists based on the Title
-            if (currentDisc.getTitle().equals(choice)){
-                return i; // return the index position of that element
-            }
-        }
-        // The disc is not found in the list - show message
-        System.out.println(choice + " disc does not exist");
-        return -1;
-    }
-
-    // Prevent user from naming multiple titles
-    public static String inputTitle(){
-        boolean validInput = false;
-        String newTitle;
-        do{
-            newTitle = Menu.keyboard.nextLine();
-            // Iterate over the list checking how many times the title has occurred
-            int times = 0;
-            for (Disc disc: discs) {
-                String title = disc.getTitle();
-                if(title.equals(newTitle))
-                    times ++;
-            }
-            if(times > 0){
-                System.out.println("This title already exists");
-                System.out.println("Please enter again");
-            }
-            else
-                validInput = true;
-
-        }
-        while(!validInput);
-        return newTitle;
-
     }
 }
