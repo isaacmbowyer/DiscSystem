@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class ManagementFile {
-    private static String path = "discsRecords.csv";
+    private static String path = "records.csv";
 
     // Write a disc to the file
-    public static void writeToFile(Disc disc) {
+    public void writeToFile(Disc disc) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(path, true));
 
@@ -17,16 +17,16 @@ public class ManagementFile {
                 MusicDisc musicDisc = (MusicDisc) disc;
                 String title = musicDisc.getTitle();
                 String genre = musicDisc.getGenre();
-                String artist = musicDisc.getArtist();
                 String releaseDate = musicDisc.getReleaseDate();
+                String artist = musicDisc.getArtist();
                 String numOfSongs = String.valueOf(musicDisc.getNumOfSongs());
                 String durationOfSongs = String.valueOf(musicDisc.getDurationOfSongs());
 
                 // Write the record
                 writer.write(title + "," +
                         genre + "," +
-                        artist + "," +
                         releaseDate + "," +
+                        artist + "," +
                         numOfSongs + "," +
                         durationOfSongs);
 
@@ -57,40 +57,46 @@ public class ManagementFile {
             e.printStackTrace();
         }
     }
-    // Gets all the records and puts them in an array
-    public static boolean readAllRecords() {
-        String line = "";
-        try {
-            File file = new File(path);
 
-            // If there is no discs stored, then output a message
-            if (file.length() == 0) {
-                System.out.println("There is no discs stored");
-                return false;
-            }
+    // Gets all the records and puts them in an array
+    public ArrayList<String[]> readAllRecords() {
+        String line = "";
+
+        File file = new File(path);
+
+        // If there is no discs stored, then output a message
+        if (file.length() == 0) {
+            System.out.println("There is no discs stored");
+            return null;
+        }
+            // Store each line into an List of arrays
+            ArrayList<String[]> records = new ArrayList<>();
+        try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
 
-             // Get all the records in order
-            ArrayList<String[]> records = new ArrayList<>();
+            // Get all the records in order from the file
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
                 records.add(values);
             }
 
-            // Change the order of the list
-            ListInReverse(records, 0, records.size() - 1);
+            // Reverse the order of the list
+            listInReverse(records, 0, records.size() - 1);
 
             // Display the reversed list
             for (String[] record : records)
                 displayRecordInHashMap(record);
 
-        } catch (IOException e) {
+
+        } catch (IOException e){
             e.printStackTrace();
         }
-        return true;
+
+        return records;
+
     }
     // Change the order of the list in reverse
-    public static void ListInReverse(ArrayList<String[]> records, int startIndex, int endIndex){
+    public void listInReverse(ArrayList<String[]> records, int startIndex, int endIndex){
         // Base Case
         if (startIndex > endIndex) {
            return;  // no more records to reverse in the list
@@ -109,19 +115,19 @@ public class ManagementFile {
         endIndex -=1;    // Move towards the start of the list by 1
 
         // Call the reverseList again
-        ListInReverse(records, startIndex, endIndex);
+        listInReverse(records, startIndex, endIndex);
 
 
     }
     // Show a HashMap of the details of the record depending on the size of the array
-    public static void displayRecordInHashMap(String[] currentRecord){
+    public void displayRecordInHashMap(String[] currentRecord){
         LinkedHashMap<String, String> detailsOfDisc =new LinkedHashMap<>();
         // Get all the attributes for that record
         if (currentRecord.length == 6){
             detailsOfDisc.put("Title", currentRecord[0]);
             detailsOfDisc.put("Genre", currentRecord[1]);
-            detailsOfDisc.put("Artist", currentRecord[2]);
-            detailsOfDisc.put("Release Date", currentRecord[3]);
+            detailsOfDisc.put("Release Date", currentRecord[2]);
+            detailsOfDisc.put("Artist", currentRecord[3]);
             detailsOfDisc.put("Number of Songs", currentRecord[4]);
             detailsOfDisc.put("Duration of Songs", currentRecord[5]);
         } else{
@@ -136,7 +142,7 @@ public class ManagementFile {
     }
 
     // Edit a disc on the file
-    public static void editRecord(RecordValues<String, String, Disc> record) {
+    public void editRecord(RecordValues<String, String, Disc> record) {
         String line = "";
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -147,7 +153,7 @@ public class ManagementFile {
                 // Parse that line into an array
                 String[] values = line.split(",");
 
-                // Check Title first, remove checking for further records
+                // Check Title first, removing checking for further discs, if it wasn't the edited one
                 if (values[0].equals(record.getOldTitle())) {
                     Disc disc = record.getDisc();
 
@@ -156,14 +162,14 @@ public class ManagementFile {
 
                     if (record.getDisc() instanceof MusicDisc) {
                         MusicDisc musicDisc = (MusicDisc) disc;
-                        // [Title, Genre, Artist, ReleaseDate, NumOfSongs, DurationOfSongs]
+                        // [Title, Genre, ReleaseDate, Artist, NumOfSongs, DurationOfSongs]
 
                         // Check which field has been changed
                         switch (editOption) {
                             case "Title" -> values[0] = musicDisc.getTitle();
                             case "Genre" -> values[1] = musicDisc.getGenre();
-                            case "Artist" -> values[2] = musicDisc.getArtist();
-                            case "Release Date" -> values[3] = musicDisc.getReleaseDate();
+                            case "Release Date" -> values[2] = musicDisc.getReleaseDate();
+                            case "Artist" -> values[3] = musicDisc.getArtist();
                             case "Number of Songs" -> values[4] = String.valueOf(musicDisc.getNumOfSongs());
                             default -> values[5] = String.valueOf(musicDisc.getDurationOfSongs());
 
@@ -202,7 +208,7 @@ public class ManagementFile {
     }
 
     // Delete the disc from the file
-    public static void deleteRecordFromFile(Disc disc){
+    public void deleteRecordFromFile(Disc disc){
         // Get the title from the deleted disc
         String removeRecord = disc.getTitle();
         String line = "";
@@ -234,7 +240,7 @@ public class ManagementFile {
         }
     }
 
-    public static void updateFile(String[] record){
+    public void updateFile(String[] record){
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(path, true));
 
@@ -246,7 +252,6 @@ public class ManagementFile {
                     writer.write(",");
                 }
             }
-
             // New line for the next record
             writer.newLine();
 
@@ -258,33 +263,39 @@ public class ManagementFile {
         }
     }
 
-    // In order for this to show the program must need to end otherwise it takes a long time to update
-    public static boolean renameFile(){
+    // Gets the user to input a new path name for the file
+    public void getUserInputToRenameFile(){
         System.out.println("Current File Name: " + path);
         System.out.println("Please enter the new File Name:");
-        String newFilePath = Menu.keyboard.nextLine();
+        String newPath = Menu.keyboard.nextLine();
+        renameFile(newPath);
+    }
 
-        // If the user has not put the extension, add it
-        if (!newFilePath.contains(".csv"))
-            newFilePath += ".csv";
+    // Rename the csv file
+    public String renameFile(String newPath) {
+        // If the NewPath equals the current path, display a message to user
+        if(newPath.equals(path)) {
+            System.out.println("This is currently already the path name");
+            return null;
+        }
+
+        // If the newPath does not contain an extension, add .csv to the new path
+        if(!(newPath.contains(".csv")))
+            newPath += ".csv";
 
         File file = new File(path);
-        File newFile = new File(newFilePath);
+
+
+        File newFile = new File(newPath);
 
         // Rename the current file name to the new file name
-        if(file.renameTo(newFile)){
-            // Update the path
-            path = newFilePath;
-            System.out.println("The new File Name is now: " + path);
-            return true;
-        }
-        // If it cannot be renamed:
-        System.out.println("This is already the File's name");
-        return false;
+        file.renameTo(newFile);
 
+        // Update the path
+        path = newPath;
+
+        System.out.println("The file's path is now: " + path );
+
+        return path;
     }
 }
-
-
-
-

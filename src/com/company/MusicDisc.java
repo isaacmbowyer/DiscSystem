@@ -1,12 +1,14 @@
 package com.company;
 
-// Subclass of the super class
+import java.util.Date;
+import java.util.LinkedHashMap;
+
 public class MusicDisc extends Disc{
     private String artist;
     private int numOfSongs;
     private int durationOfSongs;
 
-    public MusicDisc(String title, String genre, String releaseDate, String artistName, int songs, int songsDuration){
+    public MusicDisc(String title, String genre, Date releaseDate, String artistName, int songs, int songsDuration){
         super(title, genre, releaseDate);
         this.artist = artistName;
         this.numOfSongs = songs;
@@ -29,5 +31,16 @@ public class MusicDisc extends Disc{
 
     public void setDurationOfSongs(int durationOfSongs) { this.durationOfSongs = durationOfSongs;}
 
-
+    // Display the details of the Music disc using a Linked Hash Map
+    @Override
+    public LinkedHashMap<String, String> displayDetailsOfDisc() {
+        LinkedHashMap<String, String> detailsOfDisc = new LinkedHashMap<>();
+        detailsOfDisc.put("Title", this.getTitle());
+        detailsOfDisc.put("Genre", this.getGenre());
+        detailsOfDisc.put("Release Date",this.getReleaseDate());
+        detailsOfDisc.put("Artist", this.artist);
+        detailsOfDisc.put("Number of Songs", String.valueOf(this.numOfSongs));
+        detailsOfDisc.put("Duration of Songs", String.valueOf(this.durationOfSongs));
+        return detailsOfDisc;
+    }
 }

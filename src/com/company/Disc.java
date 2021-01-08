@@ -1,13 +1,16 @@
 package com.company;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashMap;
 
-// Super abstract class
 public abstract class Disc{
     private String title;
     private String genre;
-    private String releaseDate;
+    private Date releaseDate;
 
-    public Disc(String name, String genre, String date){
+    public Disc(String name, String genre, Date date){
         this.title = name;
         this.genre = genre;
         this.releaseDate = date;
@@ -25,8 +28,15 @@ public abstract class Disc{
 
     public void  setGenre(String genre){ this.genre = genre;}
 
-    public String getReleaseDate(){ return releaseDate; }
+    // Return the release Date to the user as as a String
+    public String getReleaseDate(){
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return dateFormat.format(this.releaseDate);
 
-    public void setReleaseDate(String releaseDate){ this.releaseDate = releaseDate;}
+    }
+    public void setReleaseDate(Date releaseDate){ this.releaseDate = releaseDate;}
+
+    // Classes that inherit this class must have a method which displays the details of the disc in a Linked Hash Map
+    public abstract LinkedHashMap<String, String> displayDetailsOfDisc();
 
 }

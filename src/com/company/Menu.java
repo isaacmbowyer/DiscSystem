@@ -11,6 +11,9 @@ public class Menu {
         // Run the application until the user wishes to stop
         boolean quit = false; // Checks if user decides to quit or not
         do {
+            ManagementFile fileManagement = new ManagementFile();
+            ManagementDisc discManagement = new ManagementDisc();
+
             displayMenu();  // Display Menu to the user
 
             // Get user to input their choice
@@ -23,42 +26,42 @@ public class Menu {
                 case 1 -> {
                     System.out.println("Creating a Music Disc...");
                     // Create the Disc
-                    MusicDisc musicDisc = ManagementDisc.createAMusicDisc();
+                    MusicDisc musicDisc = discManagement.createAMusicDisc();
                     // Write to the file
-                    ManagementFile.writeToFile(musicDisc);
+                    fileManagement.writeToFile(musicDisc);
                 }
 
                 // Create a Game Disc
                 case 2 -> {
                     System.out.println("Creating a Game Disc...");
                     // Create the Disc
-                    GameDisc gameDisc = ManagementDisc.createAGameDisc();
+                    GameDisc gameDisc = discManagement.createAGameDisc();
                     // Write to the file
-                    ManagementFile.writeToFile(gameDisc);
+                    fileManagement.writeToFile(gameDisc);
                 }
 
 
                 // Remove a dic
                 case 3 -> {
-                    Disc oldDisc = ManagementDisc.removeDisc();
+                    Disc oldDisc = discManagement.removeDisc();
                     if (oldDisc != null)
-                        ManagementFile.deleteRecordFromFile(oldDisc);
+                        fileManagement.deleteRecordFromFile(oldDisc);
                 }
                 // Search for a disc and display its details
-                case 4 -> ManagementDisc.searchForDisc();
+                case 4 -> discManagement.getUserInputToSearchForDisc();
 
                 // Reverse the records
-                case 5 -> ManagementFile.readAllRecords();
+                case 5 -> fileManagement.readAllRecords();
 
-                // Edit the details of a disc
+                // Edit the details of a disc ans update it in the record
                 case 6 -> {
-                    RecordValues<String, String, Disc> record = ManagementDisc.editDisc();
+                    RecordValues<String, String, Disc> record = discManagement.editDisc();
                     if (record != null)
-                       ManagementFile.editRecord(record);
+                       fileManagement.editRecord(record);
                 }
 
                 // Rename the CSV file
-                case 7 -> ManagementFile.renameFile();
+                case 7 -> fileManagement.getUserInputToRenameFile();
 
                 // Terminate the program
                 case 8 -> {

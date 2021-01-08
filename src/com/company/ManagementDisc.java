@@ -1,24 +1,132 @@
 package com.company;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.ListIterator;
 import java.util.Vector;
 
 public class ManagementDisc {
-    private static final Vector<Disc> discs = new Vector<>();     // Holds discs of MusicDiscs and GameDiscs
-    private static final String[] PEGIRatings = {"3", "7", "12", "16", "18"};
-    private static final String[] musicGenres = {"Pop", "Jazz", "Rock", "Hip hop", "Heavy Metal"};
+    /*  Used enums because they are useful for storing constant values. PEGIRatings
+        and Music Genres can be stored in an enum because we will never change these values.
+     */
+
+    private enum MusicGenre{
+        POP{
+            // override these methods to display a nice text to the user
+            @Override
+            public String toString() {
+                return "Pop";
+            }
+        },
+        JAZZ {
+            @Override
+            public String toString() {
+                return "Jazz";
+            }
+        },
+        ROCK{
+            @Override
+            public String toString() {
+                return "Rock";
+            }
+        },
+        HIPHOP{
+            @Override
+            public String toString() {
+                return "Hip Hop";
+            }
+        },
+        METAL {
+            @Override
+            public String toString() {
+                return "Heavy Metal";
+            }
+        },
+        OPERA{
+            @Override
+            public String toString() {
+                return "Opera";
+            }
+        };
+
+        // Retrieve all the values in the Enum and put them into an array
+        static String[] getValues(){
+            int index = 0;
+            String[] values = new String[6];
+            for (MusicGenre genre: MusicGenre.values()) {
+                values[index] = genre.toString();  // Make sure it is in the nice format
+                index++;
+            }
+            return values;
+        }
+    }
+
+    private enum PEGIRating{
+        U,
+        PG,
+        TWELVE {
+            @Override
+            public String toString() { return "12"; }
+        },
+        FIFTEEN {
+            @Override
+            public String toString() { return "15"; }
+        },
+        EIGHTEEN{
+            @Override
+            public String toString() { return "18"; }
+        };
+
+        // Retrieve all the values in the Enum and put them into an array
+        static String[] getValues(){
+            int index = 0;
+            String[] values = new String[5];
+            for (PEGIRating rating: PEGIRating.values()) {
+                values[index] = rating.toString();
+                index++;
+            }
+            return values;
+        }
+    }
+
+    // Holds discs of MusicDiscs and GameDiscs
+    // REMINDER: This is static because it needs to be the same for each instance created
+    private static final Vector<Disc> discs = new Vector<>();
+
+    // Get values for both enums
+    private final String[] PEGIRatingValues = PEGIRating.getValues();
+    private final String[] musicGenreValues = MusicGenre.getValues();
+
+    // Get am/ov date for the creation/editing of discs
+    public Date inputDate(){
+        Date releaseDate = null;
+        boolean valid = false;
+        System.out.println("Release Date in format of DD/MM/YYYY:");
+        do {
+            String inputDate = Menu.keyboard.nextLine();
+            try {
+                releaseDate = new SimpleDateFormat("dd/MM/yyyy").parse(inputDate);
+                valid = true;
+            } catch (ParseException e) {
+                System.out.println("Invalid date. Please try again");
+                Menu.keyboard.nextLine();
+            }
+        } while(!valid);
+
+        return releaseDate;
+    }
 
     // Gets user to input details about their Music Disc they wish to create
-    public static MusicDisc createAMusicDisc() {
+    public MusicDisc createAMusicDisc() {
         System.out.println("Title of Song:");
         String titleOfSong = Menu.keyboard.nextLine();
 
-        // Get the Genre:
-        String musicGenre = setOption(musicGenres, "Genres");
+        // Get the genre
+        String musicGenre = setOption(musicGenreValues, "Genres");
 
-        System.out.println("Release Date:");
-        String date = Menu.keyboard.nextLine();
+        // Get the date
+        Date date = inputDate();
 
         System.out.println("Artist Name:");
         String artistName = Menu.keyboard.nextLine();
@@ -40,23 +148,23 @@ public class ManagementDisc {
     }
 
     // Gets user to input details about their Game  Disc they wish to create
-    public static GameDisc createAGameDisc() {
+    public GameDisc createAGameDisc() {
         System.out.println("Title of Game:");
         String titleOfGame = Menu.keyboard.nextLine();
 
         System.out.println("Genre:");
         String genre = Menu.keyboard.nextLine();
 
-        System.out.println("Release Date:");
-        String releaseDate = Menu.keyboard.nextLine();
+        // Get the date
+        Date date = inputDate();
 
         // Get the PEGIRating
-        String chosenPEGIRating = setOption(PEGIRatings, "PEGIRatings");
+        String chosenPEGIRating = setOption(PEGIRatingValues, "PEGIRatings");
 
         System.out.println("Platform:");
         String platform = Menu.keyboard.nextLine();
 
-        GameDisc gameDisc = new GameDisc(titleOfGame, genre, releaseDate, chosenPEGIRating, platform);
+        GameDisc gameDisc = new GameDisc(titleOfGame, genre, date, chosenPEGIRating, platform);
 
         // Add the new created disc to the list
         discs.add(gameDisc);
@@ -67,7 +175,7 @@ public class ManagementDisc {
     }
 
     // Remove a disc from the discs list
-    public static Disc removeDisc() {
+    public Disc removeDisc() {
         // Check if the list is empty:
         if (discs.isEmpty()) {
             System.out.println("You have not made any discs");
@@ -78,26 +186,25 @@ public class ManagementDisc {
         String choice = Menu.keyboard.nextLine();
 
         // Find disc
-        int index = findDisc(choice);
+        final int INDEX = findDisc(choice);
 
         // If the disc does not exist - exit
-        if (index == -1)
+        if (INDEX == -1)
             return null;
 
         // Capture the disc so we can delete it in the file
-        Disc oldDisc = discs.get(index);
+        Disc oldDisc = discs.get(INDEX);
 
         // Using index remove the disc from the list
-        discs.remove(index);
+        discs.remove(INDEX);
 
         System.out.println(choice + " disc has been removed from the list");
 
         return oldDisc;
-
     }
 
     // Edit a Disc
-    public static RecordValues<String, String, Disc> editDisc() {
+    public RecordValues<String, String, Disc> editDisc() {
         // Check if the list is empty:
         if (discs.isEmpty()) {
             System.out.println("You have not made any discs");
@@ -108,14 +215,14 @@ public class ManagementDisc {
         String choice = Menu.keyboard.nextLine();
 
         // Find disc
-        int index = findDisc(choice);
+        final int INDEX = findDisc(choice);
 
         // If the disc does not exist - exit
-        if (index == -1)
+        if (INDEX == -1)
             return null;
 
         // Retrieve the disc from the index
-        Disc disc = discs.get(index);
+        Disc disc = discs.get(INDEX);
 
         // The user will be prevented with different fields to change based on what disc they made
         String[] options;
@@ -146,7 +253,7 @@ public class ManagementDisc {
                     musicDisc.setTitle(newValue);
                 }
                 case "Genre" -> {
-                    String newValue = setOption(musicGenres, "Genres:");
+                    String newValue = setOption(musicGenreValues, "Genres:");
                     musicDisc.setGenre(newValue);
                 }
                 case "Artist" -> {
@@ -154,7 +261,7 @@ public class ManagementDisc {
                     musicDisc.setArtist(newValue);
                 }
                 case "Release Date" -> {
-                    String newValue = Menu.keyboard.nextLine();
+                    Date newValue = inputDate();
                     musicDisc.setReleaseDate(newValue);
                 }
                 case "Number of Songs" -> {
@@ -182,11 +289,11 @@ public class ManagementDisc {
                     gameDisc.setGenre(newValue);
                 }
                 case "Release Date" -> {
-                    String newValue = Menu.keyboard.nextLine();
+                    Date newValue = inputDate();
                     gameDisc.setReleaseDate(newValue);
                 }
                 case "PEGIRating" -> {
-                    String newValue = setOption(PEGIRatings, "PEGIRatings:");
+                    String newValue = setOption(PEGIRatingValues, "PEGIRatings:");
                     gameDisc.setPEGIRating(newValue);
                 }
                 case "Platform" -> {
@@ -198,61 +305,59 @@ public class ManagementDisc {
 
         System.out.println("Your " + disc.getTitle() + " disc has now been changed");
 
-        /* We now need to update our file, so we can send in a Record which contains the  oldTitle, edit option the user
-            chose and the cd so we can update it
+        /* We now need to update our file, so we can send in a Record which contains the oldTitle, edit option the user
+            chose and the disc object so we can update it on the file
         */
         return new RecordValues<>(oldTitle, editOption, disc);
     }
 
-    /* Searches for a specific disc byt Title from discs list and displays its details in a LinkedHashMap so its
-    easier for the user to read
-    */
-    public static void searchForDisc() {
-        // Check if the list is empty:
+    // Get user input to search for a Disc by Title
+    public void getUserInputToSearchForDisc(){
+        // Prevent user from inputting anything if the list is empty
         if (discs.isEmpty()) {
             System.out.println("You have not made any discs");
             return;
         }
 
-        // Get user to type what Title of Disc
+        // Get the user input
         System.out.println("Enter the Title of Disc you wish to search");
-        String choice = Menu.keyboard.nextLine();
+        String title = Menu.keyboard.nextLine();
+        searchForDisc(title);
+    }
 
+    // Search for a disc by title and display its details
+    public boolean searchForDisc(String title) {
         // Find disc
-        int index = findDisc(choice);
+        final int INDEX = findDisc(title);
 
-        // If the disc does not exist return -1
-        if (index == -1)
-            return;
+        // If the disc does not exist - exit
+        if(INDEX == -1)
+            return false;
 
-        // Display the details of the disc in a Hash Map so the user can see the variables and values easily
-        LinkedHashMap<String, String> detailsOfDisc = new LinkedHashMap<>();
-        Disc disc = discs.get(index);
+        // Retrieve the disc at the index position
+        Disc disc = discs.get(INDEX);
 
-        // Get the inherited details first
-        detailsOfDisc.put("Title", disc.getTitle());
-        detailsOfDisc.put("Genre", disc.getGenre());
-        detailsOfDisc.put("Release Date", disc.getReleaseDate());
-
-        // Check if disc is an instance of MusicDisc and add the details for that class
+        LinkedHashMap<String, String> discValues;
+        // Check if disc is an instance of MusicDisc
         if (disc instanceof MusicDisc) {
             MusicDisc musicDisc = (MusicDisc) disc;
-            detailsOfDisc.put("Artist", musicDisc.getArtist());
-            detailsOfDisc.put("Number of Songs", String.valueOf(musicDisc.getNumOfSongs()));
-            detailsOfDisc.put("Duration of Songs", String.valueOf(musicDisc.getDurationOfSongs()));
-        } else { // disc would be an instance of GameDisc so add all the details for that class
+            // Get the details for that class
+            discValues = musicDisc.displayDetailsOfDisc();
+        } else { // disc would be an instance of GameDisc
             GameDisc gameDisc = (GameDisc) disc;
-            detailsOfDisc.put("PEGIRating", gameDisc.getPEGIRating());
-            detailsOfDisc.put("Platform", gameDisc.getPlatform());
+            // Get the details for that class
+            discValues = gameDisc.displayDetailsOfDisc();
+
         }
+        // Display the details to user
+        System.out.println(discValues);
 
-        // Display the details of the disc as a String
-        System.out.println(detailsOfDisc);
-
+        // Disc was displayed to the user
+        return true;
     }
 
     // Make sure that Title of the Disc does exist
-    private static int findDisc(String choice) {
+    private int findDisc(String choice) {
         for (int i = 0; i < discs.size(); i++) {
             // Retrieve the first disc in the list at its index position
             Disc currentDisc = discs.get(i);
@@ -267,7 +372,7 @@ public class ManagementDisc {
     }
 
     // Using a given list, display the list and allow the user to pick an option.
-    private static String setOption(String[] list, String message) {
+    private String setOption(String[] list, String message) {
         boolean validOption;
         String choice;
         do {
@@ -283,14 +388,14 @@ public class ManagementDisc {
     }
 
     // Display the options available to the user
-    private static void displayList(String[] list) {
+    private void displayList(String[] list) {
         for (int i = 0; i < list.length; i++) {
             System.out.println("\t" + (i + 1) + ": " + list[i]);  // i + 1 to get the position
         }
     }
 
     // User inputs a number (the position) based on the option that they want - get what they actually chose
-    private static String getChosenOption(int chosen, String[] list) {
+    private String getChosenOption(int chosen, String[] list) {
         try {
             return (list[chosen - 1]);
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -298,4 +403,10 @@ public class ManagementDisc {
             return ""; // Return an empty string if the user has entered an invalid option
         }
     }
+
+    // Add a disc to the list
+    public void addDiscToList(Disc disc){
+        discs.add(disc);
+    }
+
 }
